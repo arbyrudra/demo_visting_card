@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Your Name</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+:root{
+    --orange: #FF8C00;
+    --navy: #001f54;
+    --light-navy: #003399;
+    --dark-bg: #0a0a0a;
+    --glass: rgba(255, 255, 255, 0.1);
+    --soft-blue: #f0f4f8;
+}
+html,body{
+    margin:0; width:100%; height:100%; background: var(--dark-bg);
+    display:flex; justify-content:center; align-items:center;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow:hidden;
+}
+#container{ width:360px; height:640px; position: relative; background: #fff; border-radius: 32px; overflow: hidden; box-shadow:0 30px 60px rgba(0,0,0,0.5); }
+
+/* ================= DIRECTOR CARD ================= */
+#director-card{
+    width:100%; height:100%; background: #ffffff;
+    display:flex; flex-direction:column; position: absolute; top:0; left:0; z-index: 10;
+}
+.dir-header { 
+    background: linear-gradient(135deg, var(--navy) 0%, var(--light-navy) 100%); 
+    height: 220px; width: 100%; position: relative;
+    display: flex; justify-content: center; align-items: flex-end;
+}
+.dir-header::after {
+    content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
+    background: #fff; clip-path: polygon(0 100%, 100% 100%, 100% 0);
+}
+
+.profile-img { 
+    width: 140px; height: 140px; border-radius: 50%; 
+    border: 5px solid #fff; object-fit: cover; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2); z-index: 5; margin-bottom: -60px;
+}
+
+.dir-content { padding: 70px 24px 20px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
+.dir-content h2 { margin: 0; font-size: 28px; color: var(--navy); font-weight: 800; }
+.role-tag { background: rgba(255, 140, 0, 0.1); color: var(--orange); padding: 4px 15px; border-radius: 20px; font-weight: 700; font-size: 12px; text-transform: uppercase; margin-top: 8px; }
+
+.contact-card { text-align: left; background: #fff; width: 100%; border-radius: 24px; padding: 20px; margin-top: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
+.info-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; text-decoration: none; }
+.icon-box { width: 40px; height: 40px; background: var(--soft-blue); color: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.info-text label { font-size: 10px; text-transform: uppercase; color: #999; font-weight: 700; }
+.info-text span { font-size: 13px; color: var(--navy); font-weight: 600; }
+
+.save-btn { width: 100%; background: var(--navy); color: #fff; border: none; padding: 16px; border-radius: 15px; font-weight: 700; font-size: 14px; cursor: pointer; }
+
+.view-branches-bar { background: var(--navy); color: #fff; width: 100%; padding: 22px; font-weight: 700; text-align: center; cursor: pointer; border:none; font-size: 14px; }
+
+/* ================= LIST VIEW & SHORT GRID ================= */
+#list-view { width:100%; height:100%; background:#f8f9fa; display:none; flex-direction:column; position:absolute; top:0; left:0; z-index:20; }
+.header-bar { padding:45px 20px 10px; background:var(--navy); color:white; display:flex; align-items:center; gap:15px; }
+.back-arrow { font-size: 18px; cursor: pointer; }
+
+.scroll-area { flex: 1; overflow-y: auto; padding: 20px 15px; }
+
+.list-item { background: white; padding: 18px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; border: 1px solid #eee; }
+.list-item span { font-weight: 700; color: var(--navy); font-size: 13px; }
+
+.grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.grid-item { 
+    background: white; padding: 25px 10px; border-radius: 20px; text-align: center; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06); cursor: pointer; border: 1px solid #eee;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: transform 0.2s;
+}
+.grid-item:active { transform: scale(0.95); }
+
+/* Fit Logo inside the Grid Box */
+.grid-item img { 
+    width: 65px; 
+    height: 65px; 
+    object-fit: contain; 
+    margin-bottom: 12px;
+}
+.grid-item span { font-weight: 800; color: var(--navy); font-size: 12px; line-height: 1.3; }
+
+/* ================= DETAIL CARD ================= */
+#card-detail-view { width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; position: absolute; top:0; left:0; z-index: 30; justify-content: center; align-items: center; }
+.card-wrapper { width: 320px; height: 500px; perspective: 1500px; position: relative; }
+.card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.6s; transform-style: preserve-3d; }
+.card-inner.flipped { transform: rotateY(180deg); }
+.card-front, .card-back { position: absolute; width: 100%; height: 100%; border-radius: 25px; backface-visibility: hidden; overflow: hidden; display: flex; flex-direction: column; background: white; }
+.card-back { background: linear-gradient(145deg, #001f54, #000); color: white; transform: rotateY(180deg); padding: 22px; box-sizing: border-box; }
+.front-info { padding: 15px 20px; text-align: center; background: var(--orange); color: white; margin-top: -20px; min-height: 120px; display: flex; flex-direction: column; justify-content: center; border-radius: 30px 30px 0 0; }
+.card-back-btn { position: absolute; top: -45px; left: 0; color: white; cursor: pointer; font-weight: 600; }
+
+.social-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
+.s-link { background: var(--glass); aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); font-size: 16px; cursor: pointer; }
+.cta-btn { background: var(--orange); color: white; text-align: center; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 700; margin-top: auto; display: block; font-size: 12px; }
+
+/* ================= CONTACT PICKER POPUP ================= */
+#contact-picker {
+    display: none; position: absolute; bottom: 0; left: 0; width: 100%; 
+    background: white; border-radius: 25px 25px 0 0; z-index: 100;
+    padding: 20px; box-sizing: border-box; box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+}
+.picker-option { 
+    display: flex; align-items: center; gap: 15px; padding: 15px; 
+    background: var(--soft-blue); border-radius: 12px; margin-bottom: 10px;
+    text-decoration: none; color: var(--navy); font-weight: 700; font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+    <div id="director-card">
+        <div class="dir-header"><img src="images.jpeg" class="profile-img" onerror="this.src='https://via.placeholder.com/150'"></div>
+        <div class="dir-content">
+        <h2>Your Name</h2>
+        <div class="role-tag">position</div>
+        <div class="dept">position</div>
+            <div class="contact-card">
+                <a href="tel:+911234567890" class="info-row"><div class="icon-box"><i class="fas fa-phone-alt"></i></div><div class="info-text"><label>Phone:-</label><span>+91 12345 67890</span></div></a>
+                <a href="mailto:abc123@gmail.com" class="info-row"><div class="icon-box"><i class="fas fa-envelope"></i></div><div class="info-text"><label>Email:-</label><span>abc123@gmail.com</span></div></a>
+                <div class="info-row"><div class="icon-box"><i class="fas fa-map-marker-alt"></i></div><div class="info-text"><label>Location:-</label><span>Address.</span></div></div>
+                <button class="save-btn" onclick="downloadVCard()">SAVE TO CONTACTS</button>
+            </div>
+        </div>
+        <div class="view-branches-bar" onclick="openListView()">TAP TO VIEW All BRANCHES</div>
+    </div>
+
+    <div id="list-view">
+        <div class="header-bar">
+            <i class="fas fa-arrow-left back-arrow" id="list-back-btn" onclick="closeListView()"></i>
+            <span id="list-title" style="font-weight: 800; letter-spacing: 1px;">CAMPUS LIST</span>
+        </div>
+        <div class="scroll-area" id="list-container"></div>
+    </div>
+
+    <div id="card-detail-view">
+        <div class="card-wrapper">
+            <div class="card-back-btn" onclick="closeCard()"><i class="fas fa-arrow-left"></i> Back</div>
+            <div class="card-inner" id="card-inner" onclick="handleFlipTap(event)">
+                <div class="card-front" id="card-front"></div>
+                <div class="card-back" id="card-back"></div>
+            </div>
+            <div id="contact-picker">
+                <div style="color: var(--navy); font-weight: 800; margin-bottom: 15px; text-align: center; font-size: 14px;">CHOOSE CONTACT NUMBER</div>
+                <div id="picker-options-list"></div>
+                <button onclick="hidePicker()" style="width:100%; border:none; background:none; color:#777; font-size:11px; font-weight:700; margin-top:5px; cursor:pointer;">CANCEL</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const branches = [
+    { 
+        name:"Add Your Data Here", 
+        isCategory: true,
+        subBranches: [
+            { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+            { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+            { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+            { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+            { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+            { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+        ]
+    },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+    { name:"Add Your Data Here", addr:"Address", since:"Your data", alumni:"Your data", activities:"Your Data", img:"download.jpeg", links: { fb: "https://www.facebook.com", ig: "https://www.instagram.com", yt: "https://www.youtube.com", phone: "+91 12345 67890", map: "https://www.google.com/maps", web: "https://example.com" } },
+];
+
+function handleFlipTap(e) {
+    if (e.target.closest('.social-grid') || e.target.closest('#contact-picker')) return;
+    document.getElementById('card-inner').classList.toggle('flipped');
+}
+
+function handlePhoneClick(event, phoneData) {
+    event.stopPropagation();
+    if (Array.isArray(phoneData)) {
+        const list = document.getElementById('picker-options-list');
+        list.innerHTML = phoneData.map((num, i) => `
+            <a href="tel:${num.replace(/\s/g,'')}" class="picker-option">
+                <i class="fas fa-phone-alt"></i> Contact Option ${i+1}: ${num}
+            </a>
+        `).join('');
+        document.getElementById('contact-picker').style.display = 'block';
+    } else {
+        window.location.href = phoneData.startsWith('tel:') ? phoneData : `tel:${phoneData}`;
+    }
+}
+
+function hidePicker() { document.getElementById('contact-picker').style.display = 'none'; }
+
+function openCard(b) {
+    hidePicker();
+    document.getElementById('card-inner').classList.remove('flipped');
+    document.getElementById('card-front').innerHTML = `
+        <div style="flex:1.6; display:flex; align-items:center; justify-content:center; padding:20px;">
+            <img src="${b.img}" style="max-width:100%;" onerror="this.src='https://via.placeholder.com/200'">
+        </div>
+        <div class="front-info">
+            <h2 style="font-size:16px; margin:0;">${b.name}</h2>
+            <p style="font-size:11px; opacity:0.8; margin-top:5px;"><i class="fas fa-map-marker-alt"></i> ${b.addr}</p>
+            <div style="font-size:9px; background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:10px; margin-top:10px; align-self:center;">TAP TO FLIP</div>
+        </div>`;
+    
+    document.getElementById('card-back').innerHTML = `
+        <h3 style="color:var(--orange); text-align:center; margin-bottom:15px;">DETAILS</h3>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <div style="flex:1; background:var(--glass); padding:10px; border-radius:10px; text-align:center;">
+                <i class="fas fa-calendar" style="color:var(--orange);"></i><br><small>Est.</small><br><b>${b.since}</b>
+            </div>
+            <div style="flex:1; background:var(--glass); padding:10px; border-radius:10px; text-align:center;">
+                <i class="fas fa-users" style="color:var(--orange);"></i><br><small>Alumni</small><br><b>${b.alumni}</b>
+            </div>
+        </div>
+        <p style="font-size:11px; background:rgba(0,0,0,0.3); padding:10px; border-radius:10px;">${b.activities}</p>
+        <div class="social-grid">
+            <a href="${b.links.fb}" class="s-link"><i class="fab fa-facebook"></i></a>
+            <a href="${b.links.ig}" class="s-link"><i class="fab fa-instagram"></i></a>
+            <a href="${b.links.yt}" class="s-link"><i class="fab fa-youtube"></i></a>
+            <div class="s-link" onclick='handlePhoneClick(event, ${JSON.stringify(b.links.phone)})'><i class="fas fa-phone-alt"></i></div>
+            <a href="${b.links.map}" class="s-link"><i class="fas fa-map"></i></a>
+        </div>
+        <a href="${b.links.web}" class="cta-btn">VISIT WEBSITE</a>`;
+        
+    document.getElementById('card-detail-view').style.display = 'flex';
+}
+
+function renderList(data, isGrid = false) {
+    const list = document.getElementById('list-container');
+    if(isGrid) {
+        list.innerHTML = `<div class="grid-container">` + data.map(b => `
+            <div class="grid-item" onclick='openCard(${JSON.stringify(b)})'>
+                <img src="${b.img}" onerror="this.src='https://via.placeholder.com/65'">
+                <span>${b.name}</span>
+            </div>`).join('') + `</div>`;
+    } else {
+        list.innerHTML = data.map(b => `
+            <div class="list-item" onclick='handleBranchClick(${JSON.stringify(b)})'>
+                <span>${b.name}</span>
+                <i class="fas fa-chevron-right"></i>
+            </div>`).join('');
+    }
+}
+
+function handleBranchClick(b) {
+    if(b.isCategory) {
+        document.getElementById('list-title').innerText = "CHOOSE UNIT";
+        document.getElementById('list-back-btn').onclick = openListView;
+        renderList(b.subBranches, true);
+    } else {
+        openCard(b);
+    }
+}
+
+function openListView() { 
+    document.getElementById('list-title').innerText = "CAMPUS LIST";
+    document.getElementById('list-back-btn').onclick = closeListView;
+    renderList(branches, false); 
+    document.getElementById('list-view').style.display = 'flex'; 
+}
+function closeListView() { document.getElementById('list-view').style.display = 'none'; }
+function closeCard() { document.getElementById('card-detail-view').style.display = 'none'; }
+function downloadVCard() {
+    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:Pranay Jardosh\nORG:P.P. Savani Group\nTITLE:Director\nTEL;TYPE=CELL:+9199251 66695\nEMAIL:director@ppsavanicbse.org\nEND:VCARD`;
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const url = window.URL.createObjectURL(blob);
+    const newLink = document.createElement('a');
+    newLink.download = 'Pranay_Jardosh.vcf';
+    newLink.href = url;
+    newLink.click();
+}
+</script>
+</body>
+</html>
