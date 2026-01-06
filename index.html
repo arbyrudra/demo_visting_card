@@ -278,11 +278,11 @@ function openListView() {
 function closeListView() { document.getElementById('list-view').style.display = 'none'; }
 function closeCard() { document.getElementById('card-detail-view').style.display = 'none'; }
 function downloadVCard() {
-    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:Pranay Jardosh\nORG:P.P. Savani Group\nTITLE:Director\nTEL;TYPE=CELL:+9199251 66695\nEMAIL:director@ppsavanicbse.org\nEND:VCARD`;
+    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:Owner Details\nORG:Data\nTITLE:Position\nTEL;TYPE=CELL:+91 12345 67890\nEMAIL:abc123@gmail.com\nEND:VCARD`;
     const blob = new Blob([vcard], { type: 'text/vcard' });
     const url = window.URL.createObjectURL(blob);
     const newLink = document.createElement('a');
-    newLink.download = 'Pranay_Jardosh.vcf';
+    newLink.download = 'Owner Name.vcf';
     newLink.href = url;
     newLink.click();
 }
